@@ -202,5 +202,10 @@ def notify(request):
         pass
     return HttpResponse()
 ```
+### .env格式
+```
+LINE_NOTIFY_CLIENT_SECRET=xxxxxxxxxxxxxx
+LINE_NOTIFY_CLIENT_ID=xxxxxxxxxxxxxx
+```
 
 ![image](https://user-images.githubusercontent.com/33425754/159751465-942415b0-b4ed-47c6-9dce-93a79f7cd1cd.png)
