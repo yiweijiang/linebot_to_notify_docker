@@ -142,4 +142,63 @@ def callback(request):
 
 ## Test
 ### 透過 ngrok 在本地端測試，設定callback網址
+```
+ngrok http 8000
+```
 ![image](https://user-images.githubusercontent.com/33425754/159720900-27699148-5189-40d0-a7bb-57f0541448a4.png)
+
+## 連動 Notify
+### setting.py
+```python
+#LINE Notify設定
+LINE_NOTIFY_CLIENT_SECRET = os.getenv("LINE_NOTIFY_CLIENT_SECRET")
+LINE_NOTIFY_CLIENT_ID = os.getenv("LINE_NOTIFY_CLIENT_ID")
+NOTIFY_URL = 'https://15b4-114-37-188-160.ngrok.io/pttApp/notify'
+```
+
+### views.py
+```python
+# 如果傳的文字是"連動Notify"，則回傳連動的URL
+if mtext == '連動Notify':
+    url = f'https://notify-bot.line.me/oauth/authorize?response_type=code&client_id={settings.LINE_NOTIFY_CLIENT_ID}&redirect_uri={settings.NOTIFY_URL}&scope=notify&state=NO_STATE'
+    line_bot_api.reply_message(
+        event.reply_token,
+        TextSendMessage(text=url)
+    )
+
+
+# 將 Notify Access Token 存在資料庫之中
+@csrf_exempt
+def notify(request):
+    pattern = 'code=.*&'
+
+    code = None
+    raw_uri = request.get_raw_uri()
+
+    codes = re.findall(pattern,raw_uri)
+    for code in codes:
+        code = code[5:-1]
+
+    #抓取user的notify token
+    user_notify_token_get_url = 'https://notify-bot.line.me/oauth/token'
+    params = {
+        'grant_type':'authorization_code',
+        'code':code,
+        'redirect_uri':settings.NOTIFY_URL,
+        'client_id':settings.LINE_NOTIFY_CLIENT_ID,
+        'client_secret':settings.LINE_NOTIFY_CLIENT_SECRET
+    }
+    get_token = requests.post(user_notify_token_get_url,params=params)
+    token = get_token.json()['access_token']
+
+    #抓取user的info
+    user_info_url = 'https://notify-api.line.me/api/status'
+    headers = {'Authorization':'Bearer '+token}
+    get_user_info = requests.get(user_info_url,headers=headers)
+    notify_user_info = get_user_info.json()
+    if notify_user_info['targetType']=='USER':
+        User_Info.objects.filter(name=notify_user_info['target']).update(notify=token)
+    elif notify_user_info['targetType']=='GROUP':
+        pass
+    return HttpResponse()
+```
