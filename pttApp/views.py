@@ -1,14 +1,14 @@
 from django.shortcuts import render
-from pttApp.models import *
-from linebot import LineBotApi, WebhookParser
-from linebot.exceptions import InvalidSignatureError, LineBotApiError
-from linebot.models import MessageEvent, TextSendMessage
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden
+from linebot import LineBotApi, WebhookParser
+from linebot.exceptions import InvalidSignatureError, LineBotApiError
+from linebot.models import MessageEvent, TextSendMessage
+from pttApp.models import *
+import requests
 import os
 import re
-import requests
 
 line_bot_api = LineBotApi(settings.LINE_CHANNEL_ACCESS_TOKEN)
 parser = WebhookParser(settings.LINE_CHANNEL_SECRET)
@@ -45,7 +45,6 @@ def callback(request):
                     User_Info.objects.filter(uid=uid).update(name=name,pic_url=pic_url,mtext=mtext)
 
                 if mtext == '連動Notify':
-                    print(mtext)
                     url = f'https://notify-bot.line.me/oauth/authorize?response_type=code&client_id={settings.LINE_NOTIFY_CLIENT_ID}&redirect_uri={settings.NOTIFY_URL}&scope=notify&state=NO_STATE'
                     line_bot_api.reply_message(
                         event.reply_token,
