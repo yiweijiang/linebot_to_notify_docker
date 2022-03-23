@@ -202,3 +202,5 @@ def notify(request):
         pass
     return HttpResponse()
 ```
+
+![image](https://user-images.githubusercontent.com/33425754/159751465-942415b0-b4ed-47c6-9dce-93a79f7cd1cd.png)
