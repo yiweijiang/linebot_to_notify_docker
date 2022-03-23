@@ -51,6 +51,18 @@ def callback(request):
                         TextSendMessage(text=url)
                     )
 
+                # 測試LINE Notify 傳送訊息
+                elif mtext == 'Notify TEST':
+                    token = User_Info.objects.filter(uid=uid)[0].notify
+                    msg = 'TEST!'
+
+                    headers = {
+                        "Authorization": "Bearer " + token, 
+                        "Content-Type" : "application/x-www-form-urlencoded"
+                    }
+                    payload = {'message': msg}
+                    r = requests.post("https://notify-api.line.me/api/notify", headers = headers, params = payload)
+
                 # # 回傳一樣的話
                 # line_bot_api.reply_message(
                 #     event.reply_token,
