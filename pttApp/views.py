@@ -9,6 +9,7 @@ from pttApp.models import *
 import requests
 import os
 import re
+from .Func.pttCrawler import PTTCrawler
 
 line_bot_api = LineBotApi(settings.LINE_CHANNEL_ACCESS_TOKEN)
 parser = WebhookParser(settings.LINE_CHANNEL_SECRET)
@@ -51,7 +52,7 @@ def callback(request):
                         TextSendMessage(text=url)
                     )
 
-                # 測試LINE Notify 傳送訊息
+                # 測試 LINE Notify 傳送訊息
                 elif mtext == 'Notify TEST':
                     token = User_Info.objects.filter(uid=uid)[0].notify
                     msg = 'TEST!'
@@ -62,6 +63,19 @@ def callback(request):
                     }
                     payload = {'message': msg}
                     r = requests.post("https://notify-api.line.me/api/notify", headers = headers, params = payload)
+
+                # 測試能否用 LINE Notify 傳送 PTT八卦版訊息
+                elif mtext == 'PTT TEST':
+                    token = User_Info.objects.filter(uid=uid)[0].notify
+                    msg = PTTCrawler()
+
+                    headers = {
+                        "Authorization": "Bearer " + token, 
+                        "Content-Type" : "application/x-www-form-urlencoded"
+                    }
+                    payload = {'message': msg}
+                    r = requests.post("https://notify-api.line.me/api/notify", headers = headers, params = payload)
+
 
                 # # 回傳一樣的話
                 # line_bot_api.reply_message(
