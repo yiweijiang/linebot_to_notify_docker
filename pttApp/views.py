@@ -36,7 +36,7 @@ def callback(request):
                 profile = line_bot_api.get_profile(uid)
                 name = profile.display_name # USER的名字
                 pic_url = profile.picture_url # USER的大頭貼
-                token = User_Info.objects.filter(uid=uid)[0].notify # 獲得 token
+                token = None
 
                 message=[]
                 if User_Info.objects.filter(uid=uid).exists()==False:
@@ -45,6 +45,7 @@ def callback(request):
                 else:
                     # 更新用戶資料
                     User_Info.objects.filter(uid=uid).update(name=name,pic_url=pic_url,mtext=mtext)
+                    token = User_Info.objects.filter(uid=uid)[0].notify # 獲得 token
 
                 if mtext == '連動Notify':
                     url = f'https://notify-bot.line.me/oauth/authorize?response_type=code&client_id={settings.LINE_NOTIFY_CLIENT_ID}&redirect_uri={settings.NOTIFY_URL}&scope=notify&state=NO_STATE'
