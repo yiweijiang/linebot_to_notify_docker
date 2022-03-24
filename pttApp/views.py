@@ -64,7 +64,8 @@ def callback(request):
                         payload = {'message': msg}
                         r = requests.post("https://notify-api.line.me/api/notify", headers = headers, params = payload)
                     else:
-                        msg = '請先綁定 Line Notify\n輸入「連動Notify」即可開始綁定'
+                        url = f'https://notify-bot.line.me/oauth/authorize?response_type=code&client_id={settings.LINE_NOTIFY_CLIENT_ID}&redirect_uri={settings.NOTIFY_URL}&scope=notify&state=NO_STATE'
+                        msg = f'請先綁定 Line Notify\n點擊下方連結即可開始綁定\n{url}'
                         line_bot_api.reply_message(
                             event.reply_token,
                             TextSendMessage(text=msg)
@@ -82,7 +83,8 @@ def callback(request):
                             payload = {'message': msg}
                             r = requests.post("https://notify-api.line.me/api/notify", headers = headers, params = payload)
                     else:
-                        msg = '請先綁定 Line Notify\n輸入「連動Notify」即可開始綁定'
+                        url = f'https://notify-bot.line.me/oauth/authorize?response_type=code&client_id={settings.LINE_NOTIFY_CLIENT_ID}&redirect_uri={settings.NOTIFY_URL}&scope=notify&state=NO_STATE'
+                        msg = f'請先綁定 Line Notify\n點擊下方連結即可開始綁定\n{url}'
                         line_bot_api.reply_message(
                             event.reply_token,
                             TextSendMessage(text=msg)
