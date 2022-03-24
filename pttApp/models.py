@@ -11,4 +11,13 @@ class User_Info(models.Model):
     mdt = models.DateTimeField(auto_now=True)                           #物件儲存的日期時間                      #物件儲存的日期時間
 
     def __str__(self):
-        return self.uid
+        return self.name
+
+class Ptt_Info(models.Model):
+    TITLE = models.TextField()
+    URL = models.URLField()
+    NRECS = models.IntegerField()
+    C_TIME = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.TITLE

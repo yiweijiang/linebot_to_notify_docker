@@ -5,7 +5,7 @@ from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbid
 from linebot import LineBotApi, WebhookParser
 from linebot.exceptions import InvalidSignatureError, LineBotApiError
 from linebot.models import MessageEvent, TextSendMessage
-from pttApp.models import *
+from pttApp.models import User_Info
 import requests
 import os
 import re
@@ -31,11 +31,11 @@ def callback(request):
         for event in events:
             if isinstance(event, MessageEvent):
                 # 獲取用戶資料
-                mtext=event.message.text
-                uid=event.source.user_id
-                profile=line_bot_api.get_profile(uid)
-                name=profile.display_name
-                pic_url=profile.picture_url
+                mtext = event.message.text # USER傳送的文字
+                uid = event.source.user_id # USER ID
+                profile = line_bot_api.get_profile(uid)
+                name = profile.display_name # USER的名字
+                pic_url = profile.picture_url # USER的大頭貼
                 token = User_Info.objects.filter(uid=uid)[0].notify # 獲得 token
 
                 message=[]
@@ -74,13 +74,13 @@ def callback(request):
                 elif mtext == 'PTT TEST':
                     if token:
                         msg = PTTCrawler()
-
-                        headers = {
-                            "Authorization": "Bearer " + token, 
-                            "Content-Type" : "application/x-www-form-urlencoded"
-                        }
-                        payload = {'message': msg}
-                        r = requests.post("https://notify-api.line.me/api/notify", headers = headers, params = payload)
+                        if msg != '\n':
+                            headers = {
+                                "Authorization": "Bearer " + token, 
+                                "Content-Type" : "application/x-www-form-urlencoded"
+                            }
+                            payload = {'message': msg}
+                            r = requests.post("https://notify-api.line.me/api/notify", headers = headers, params = payload)
                     else:
                         msg = '請先綁定 Line Notify\n輸入「連動Notify」即可開始綁定'
                         line_bot_api.reply_message(
@@ -97,6 +97,7 @@ def callback(request):
     else:
         return HttpResponseBadRequest()
 
+# 用來連動 LINE NOTIFY
 @csrf_exempt
 def notify(request):
     pattern = 'code=.*&'

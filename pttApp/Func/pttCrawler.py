@@ -1,5 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
+from pttApp.models import Ptt_Info
 
 def PTTCrawler():
     res = '\n'
@@ -11,5 +12,12 @@ def PTTCrawler():
     for nrec, title in zip(nrecs, titles):
         if title.find('a') != None and nrec.text.isdigit():
             if int(nrec.text) >= 50:
-                res += f"{title.find('a').get_text()}\n{url + title.find('a')['href']}\n\n"
+                href = url + title.find('a')['href']
+                if Ptt_Info.objects.filter(URL=href).exists() == False:
+                    res += f"{title.find('a').get_text()}\n{href}\n\n"
+                    # 建立新資料
+                    Ptt_Info.objects.create(URL=href,TITLE=title.find('a').get_text(),NRECS=int(nrec.text))
+                else:
+                    # 更新推數
+                    Ptt_Info.objects.filter(URL=href).update(NRECS=int(nrec.text))
     return res
