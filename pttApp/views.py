@@ -36,6 +36,7 @@ def callback(request):
                 profile=line_bot_api.get_profile(uid)
                 name=profile.display_name
                 pic_url=profile.picture_url
+                token = User_Info.objects.filter(uid=uid)[0].notify # 獲得 token
 
                 message=[]
                 if User_Info.objects.filter(uid=uid).exists()==False:
@@ -54,28 +55,38 @@ def callback(request):
 
                 # 測試 LINE Notify 傳送訊息
                 elif mtext == 'Notify TEST':
-                    token = User_Info.objects.filter(uid=uid)[0].notify
-                    msg = 'TEST!'
-
-                    headers = {
-                        "Authorization": "Bearer " + token, 
-                        "Content-Type" : "application/x-www-form-urlencoded"
-                    }
-                    payload = {'message': msg}
-                    r = requests.post("https://notify-api.line.me/api/notify", headers = headers, params = payload)
+                    if token:
+                        msg = 'TEST!'
+                        headers = {
+                            "Authorization": "Bearer " + token, 
+                            "Content-Type" : "application/x-www-form-urlencoded"
+                        }
+                        payload = {'message': msg}
+                        r = requests.post("https://notify-api.line.me/api/notify", headers = headers, params = payload)
+                    else:
+                        msg = '請先綁定 Line Notify\n輸入「連動Notify」即可開始綁定'
+                        line_bot_api.reply_message(
+                            event.reply_token,
+                            TextSendMessage(text=msg)
+                        )
 
                 # 測試能否用 LINE Notify 傳送 PTT八卦版訊息
                 elif mtext == 'PTT TEST':
-                    token = User_Info.objects.filter(uid=uid)[0].notify
-                    msg = PTTCrawler()
+                    if token:
+                        msg = PTTCrawler()
 
-                    headers = {
-                        "Authorization": "Bearer " + token, 
-                        "Content-Type" : "application/x-www-form-urlencoded"
-                    }
-                    payload = {'message': msg}
-                    r = requests.post("https://notify-api.line.me/api/notify", headers = headers, params = payload)
-
+                        headers = {
+                            "Authorization": "Bearer " + token, 
+                            "Content-Type" : "application/x-www-form-urlencoded"
+                        }
+                        payload = {'message': msg}
+                        r = requests.post("https://notify-api.line.me/api/notify", headers = headers, params = payload)
+                    else:
+                        msg = '請先綁定 Line Notify\n輸入「連動Notify」即可開始綁定'
+                        line_bot_api.reply_message(
+                            event.reply_token,
+                            TextSendMessage(text=msg)
+                        )
 
                 # # 回傳一樣的話
                 # line_bot_api.reply_message(
