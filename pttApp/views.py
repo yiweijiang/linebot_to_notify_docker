@@ -113,6 +113,8 @@ def notify(request):
     for code in codes:
         code = code[5:-1]
 
+    print(code)
+
     #抓取user的notify token
     user_notify_token_get_url = 'https://notify-bot.line.me/oauth/token'
     params = {
@@ -122,7 +124,11 @@ def notify(request):
         'client_id':settings.LINE_NOTIFY_CLIENT_ID,
         'client_secret':settings.LINE_NOTIFY_CLIENT_SECRET
     }
+
+    print(params)
+
     get_token = requests.post(user_notify_token_get_url,params=params)
+    print(get_token)
     token = get_token.json()['access_token']
 
     #抓取user的info
