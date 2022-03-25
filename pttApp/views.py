@@ -31,6 +31,7 @@ def callback(request):
         for event in events:
             if isinstance(event, MessageEvent):
                 # 獲取用戶資料
+                print(event)
                 mtext = event.message.text # USER傳送的文字
                 uid = event.source.user_id # USER ID
                 profile = line_bot_api.get_profile(uid)

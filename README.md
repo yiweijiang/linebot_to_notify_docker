@@ -209,3 +209,31 @@ LINE_NOTIFY_CLIENT_ID=xxxxxxxxxxxxxx
 ```
 
 ![image](https://user-images.githubusercontent.com/33425754/159751465-942415b0-b4ed-47c6-9dce-93a79f7cd1cd.png)
+
+
+## Heroku 部屬
+建立一個專案
+```
+heroku create -a example-app
+```
+
+連接到已經存在的專案
+```
+heroku git:remote -a yourproject
+```
+重新命名
+```
+git remote rename heroku heroku-staging
+```
+### 資料庫相關
+需要使用指令建立資料庫
+```
+heroku run python manage.py makemigrations 
+heroku run python manage.py migrate
+```
+有時候會有以下error
+The error : django.db.utils.ProgrammingError: relation "yourTable" does not exist
+可以使用下方指令修補
+```
+heroku run python manage.py migrate --run-syncdb
+```
