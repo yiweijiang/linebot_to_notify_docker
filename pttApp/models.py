@@ -18,6 +18,3 @@ class Ptt_Info(models.Model):
     URL = models.URLField()
     NRECS = models.IntegerField()
     C_TIME = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return self.TITLE

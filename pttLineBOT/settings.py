@@ -19,13 +19,13 @@ load_dotenv()
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 #LINE Bot憑證
-LINE_CHANNEL_ACCESS_TOKEN = os.getenv("LINE_CHANNEL_ACCESS_TOKEN")
-LINE_CHANNEL_SECRET = os.getenv("LINE_CHANNEL_SECRET")
+LINE_CHANNEL_ACCESS_TOKEN = os.environ.get('LINE_CHANNEL_ACCESS_TOKEN', os.getenv("LINE_CHANNEL_ACCESS_TOKEN"))
+LINE_CHANNEL_SECRET = os.environ.get('LINE_CHANNEL_SECRET', os.getenv("LINE_CHANNEL_SECRET"))
 
 #LINE Notify設定
-LINE_NOTIFY_CLIENT_SECRET = os.getenv("LINE_NOTIFY_CLIENT_SECRET")
-LINE_NOTIFY_CLIENT_ID = os.getenv("LINE_NOTIFY_CLIENT_ID")
-NOTIFY_URL = 'https://415a-114-37-188-160.ngrok.io/pttApp/notify'
+LINE_NOTIFY_CLIENT_SECRET = os.environ.get('LINE_NOTIFY_CLIENT_SECRET', os.getenv("LINE_NOTIFY_CLIENT_SECRET"))
+LINE_NOTIFY_CLIENT_ID = os.environ.get('LINE_NOTIFY_CLIENT_ID', os.getenv("LINE_NOTIFY_CLIENT_ID"))
+NOTIFY_URL = os.environ.get('NOTIFY_URL', os.getenv("NOTIFY_URL"))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
@@ -90,7 +90,7 @@ DATABASES = {
         'NAME': os.environ.get('POSTGRES_NAME'),
         'USER': os.environ.get('POSTGRES_USER'),
         'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
-        'HOST': 'db',
+        'HOST': os.environ.get('HOST', os.getenv("HOST")),
         'PORT': 5432,
     }
 }

@@ -12,7 +12,7 @@ def PTTCrawler():
     index = soup.find_all('a', class_='btn wide')[1]['href']
     page = int(re.findall(r"\d+", index)[0]) + 1
 
-    for i in range(20, -1, -1):
+    for i in range(10, -1, -1):
         page_url = f'https://www.ptt.cc/bbs/Gossiping/index{page-i}.html'
         r = requests.get(page_url, cookies={'over18':'1'})
         soup = BeautifulSoup(r.text, "html.parser")
@@ -21,7 +21,7 @@ def PTTCrawler():
         titles = soup.find_all('div', class_='title')
         for nrec, title in zip(nrecs, titles):
             if title.find('a') != None and nrec.text.isdigit():
-                if int(nrec.text) >= 50:
+                if int(nrec.text) >= 30:
                     href = url + title.find('a')['href']
                     if Ptt_Info.objects.filter(URL=href).exists() == False:
                         res += f"{title.find('a').get_text()}\n{href}\n\n"
@@ -30,6 +30,11 @@ def PTTCrawler():
                     else:
                         # 更新推數
                         Ptt_Info.objects.filter(URL=href).update(NRECS=int(nrec.text))
+    # 刪除太多的資料
+    all_data = Ptt_Info.objects.order_by('id')
+    if len(all_data) > 1000:
+        for i in all_data[:500]:
+            Ptt_Info.objects.filter(id=i.id).delete()
     return res
 
 # PTTCrawler()
