@@ -5,7 +5,7 @@ from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbid
 from linebot import LineBotApi, WebhookParser
 from linebot.exceptions import InvalidSignatureError, LineBotApiError
 from linebot.models import MessageEvent, TextSendMessage
-from pttApp.models import User_Info
+from pttApp.models import User_Info, Group_Info
 import requests
 import os
 import re
@@ -66,7 +66,8 @@ def callback(request):
                         payload = {'message': msg}
                         r = requests.post("https://notify-api.line.me/api/notify", headers = headers, params = payload)
                     else:
-                        url = settings.NOTIFY_CONNECT_URL
+                        url = f'https://notify-bot.line.me/oauth/authorize?response_type=code&client_id={settings.LINE_NOTIFY_CLIENT_ID}&redirect_uri={settings.NOTIFY_URL}&scope=notify&state=NO_STATE'
+                        # url = settings.NOTIFY_CONNECT_URL
                         msg = f'請先綁定 Line Notify\n點擊下方連結即可開始綁定\n{url}'
                         line_bot_api.reply_message(
                             event.reply_token,
@@ -85,7 +86,8 @@ def callback(request):
                             payload = {'message': msg}
                             r = requests.post("https://notify-api.line.me/api/notify", headers = headers, params = payload)
                     else:
-                        url = settings.NOTIFY_CONNECT_URL
+                        url = f'https://notify-bot.line.me/oauth/authorize?response_type=code&client_id={settings.LINE_NOTIFY_CLIENT_ID}&redirect_uri={settings.NOTIFY_URL}&scope=notify&state=NO_STATE'
+                        # url = settings.NOTIFY_CONNECT_URL
                         msg = f'請先綁定 Line Notify\n點擊下方連結即可開始綁定\n{url}'
                         line_bot_api.reply_message(
                             event.reply_token,
@@ -105,15 +107,12 @@ def callback(request):
 @csrf_exempt
 def notify(request):
     pattern = 'code=.*&'
-
     code = None
     raw_uri = request.get_raw_uri()
 
     codes = re.findall(pattern,raw_uri)
     for code in codes:
         code = code[5:-1]
-
-    print(code)
 
     #抓取user的notify token
     user_notify_token_get_url = 'https://notify-bot.line.me/oauth/token'
@@ -125,11 +124,10 @@ def notify(request):
         'client_secret':settings.LINE_NOTIFY_CLIENT_SECRET
     }
 
-    print(params)
-
     get_token = requests.post(user_notify_token_get_url,params=params)
-    print(get_token)
     token = get_token.json()['access_token']
+
+    print(f'token:{token}')
 
     #抓取user的info
     user_info_url = 'https://notify-api.line.me/api/status'
@@ -139,5 +137,9 @@ def notify(request):
     if notify_user_info['targetType']=='USER':
         User_Info.objects.filter(name=notify_user_info['target']).update(notify=token)
     elif notify_user_info['targetType']=='GROUP':
-        pass
+        if Group_Info.objects.filter(name=notify_user_info['target']).exists():
+            Group_Info.objects.filter(name=notify_user_info['target']).update(notify=token)
+        else:
+            Group_Info.objects.create(name=notify_user_info['target'], notify=token)
+
     return HttpResponse()

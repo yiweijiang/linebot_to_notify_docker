@@ -8,7 +8,7 @@ class User_Info(models.Model):
     pic_url = models.CharField(max_length=255,null=False)               #大頭貼網址
     mtext = models.CharField(max_length=255,blank=True,null=False)      #文字訊息紀錄
     notify = models.CharField(max_length=255,blank=True,null=False)     #Notify Access Token
-    mdt = models.DateTimeField(auto_now=True)                           #物件儲存的日期時間                      #物件儲存的日期時間
+    mdt = models.DateTimeField(auto_now=True)                           #物件儲存的日期時間 
 
     def __str__(self):
         return self.name
@@ -18,3 +18,8 @@ class Ptt_Info(models.Model):
     URL = models.URLField()
     NRECS = models.IntegerField()
     C_TIME = models.DateTimeField(auto_now_add=True)
+
+class Group_Info(models.Model):
+    name = models.CharField(max_length=255,blank=True,null=False)       #Group名字
+    notify = models.CharField(max_length=255,blank=True,null=False)     #Notify Access Token
+    mdt = models.DateTimeField(auto_now=True)                           #物件儲存的日期時間
