@@ -225,6 +225,11 @@ heroku git:remote -a yourproject
 ```
 git remote rename heroku heroku-staging
 ```
+
+把.env的設定輸入在 Heroku 平台上
+![image](https://user-images.githubusercontent.com/33425754/160231857-b726ffb9-c199-4b66-875c-607127383248.png)
+Heroku -> Settings -> Config Vars
+
 ### 資料庫相關
 需要使用指令建立資料庫
 ```
