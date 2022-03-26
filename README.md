@@ -85,6 +85,11 @@ INSTALLED_APPS = [
 ```
 LINE_CHANNEL_ACCESS_TOKEN=xxxxxxxxxxxxxx
 LINE_CHANNEL_SECRET=xxxxxxxxxxxxxx
+LINE_NOTIFY_CLIENT_SECRET=xxxxxxxxxxxxxx
+LINE_NOTIFY_CLIENT_ID=xxxxxxxxxxxxxx
+NOTIFY_URL=xxxxxxxxxxxxxx
+HOST=db
+NOTIFY_CONNECT_URL=https://notify-bot.line.me/oauth/authorize?response_type=code&client_id={notify_client_id}&redirect_uri={yourdomain}/pttApp/notify&scope=notify&state=NO_STATE
 ```
 
 ### 在pttApp底下建立新的 urls.py
@@ -201,11 +206,6 @@ def notify(request):
     elif notify_user_info['targetType']=='GROUP':
         pass
     return HttpResponse()
-```
-### .env格式
-```
-LINE_NOTIFY_CLIENT_SECRET=xxxxxxxxxxxxxx
-LINE_NOTIFY_CLIENT_ID=xxxxxxxxxxxxxx
 ```
 
 ![image](https://user-images.githubusercontent.com/33425754/159751465-942415b0-b4ed-47c6-9dce-93a79f7cd1cd.png)
