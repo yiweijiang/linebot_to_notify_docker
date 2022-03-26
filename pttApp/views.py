@@ -49,7 +49,7 @@ def callback(request):
                     token = User_Info.objects.filter(uid=uid)[0].notify # 獲得 token
 
                 if mtext == '連動Notify':
-                    url = f'https://notify-bot.line.me/oauth/authorize?response_type=code&client_id={settings.LINE_NOTIFY_CLIENT_ID}&redirect_uri={settings.NOTIFY_URL}&scope=notify&state=NO_STATE'
+                    url = settings.NOTIFY_CONNECT_URL
                     line_bot_api.reply_message(
                         event.reply_token,
                         TextSendMessage(text=url)
@@ -66,7 +66,7 @@ def callback(request):
                         payload = {'message': msg}
                         r = requests.post("https://notify-api.line.me/api/notify", headers = headers, params = payload)
                     else:
-                        url = f'https://notify-bot.line.me/oauth/authorize?response_type=code&client_id={settings.LINE_NOTIFY_CLIENT_ID}&redirect_uri={settings.NOTIFY_URL}&scope=notify&state=NO_STATE'
+                        url = settings.NOTIFY_CONNECT_URL
                         msg = f'請先綁定 Line Notify\n點擊下方連結即可開始綁定\n{url}'
                         line_bot_api.reply_message(
                             event.reply_token,
@@ -85,7 +85,7 @@ def callback(request):
                             payload = {'message': msg}
                             r = requests.post("https://notify-api.line.me/api/notify", headers = headers, params = payload)
                     else:
-                        url = f'https://notify-bot.line.me/oauth/authorize?response_type=code&client_id={settings.LINE_NOTIFY_CLIENT_ID}&redirect_uri={settings.NOTIFY_URL}&scope=notify&state=NO_STATE'
+                        url = settings.NOTIFY_CONNECT_URL
                         msg = f'請先綁定 Line Notify\n點擊下方連結即可開始綁定\n{url}'
                         line_bot_api.reply_message(
                             event.reply_token,

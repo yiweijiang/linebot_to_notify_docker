@@ -26,7 +26,7 @@ LINE_CHANNEL_SECRET = os.environ.get('LINE_CHANNEL_SECRET', os.getenv("LINE_CHAN
 LINE_NOTIFY_CLIENT_SECRET = os.environ.get('LINE_NOTIFY_CLIENT_SECRET', os.getenv("LINE_NOTIFY_CLIENT_SECRET"))
 LINE_NOTIFY_CLIENT_ID = os.environ.get('LINE_NOTIFY_CLIENT_ID', os.getenv("LINE_NOTIFY_CLIENT_ID"))
 NOTIFY_URL = os.environ.get('NOTIFY_URL', os.getenv("NOTIFY_URL"))
-
+NOTIFY_CONNECT_URL = os.environ.get('NOTIFY_CONNECT_URL', os.getenv("NOTIFY_CONNECT_URL"))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
