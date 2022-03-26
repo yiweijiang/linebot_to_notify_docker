@@ -69,9 +69,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 #LINE Bot憑證
-LINE_CHANNEL_ACCESS_TOKEN = os.getenv("LINE_CHANNEL_ACCESS_TOKEN")
-LINE_CHANNEL_SECRET = os.getenv("LINE_CHANNEL_SECRET")
-
+LINE_CHANNEL_ACCESS_TOKEN = os.environ.get('LINE_CHANNEL_ACCESS_TOKEN', os.getenv("LINE_CHANNEL_ACCESS_TOKEN"))
+LINE_CHANNEL_SECRET = os.environ.get('LINE_CHANNEL_SECRET', os.getenv("LINE_CHANNEL_SECRET"))
 
 INSTALLED_APPS = [
       ...
@@ -156,9 +155,9 @@ ngrok http 8000
 ### setting.py
 ```python
 #LINE Notify設定
-LINE_NOTIFY_CLIENT_SECRET = os.getenv("LINE_NOTIFY_CLIENT_SECRET")
-LINE_NOTIFY_CLIENT_ID = os.getenv("LINE_NOTIFY_CLIENT_ID")
-NOTIFY_URL = 'https://15b4-114-37-188-160.ngrok.io/pttApp/notify'
+LINE_NOTIFY_CLIENT_SECRET = os.environ.get('LINE_NOTIFY_CLIENT_SECRET', os.getenv("LINE_NOTIFY_CLIENT_SECRET"))
+LINE_NOTIFY_CLIENT_ID = os.environ.get('LINE_NOTIFY_CLIENT_ID', os.getenv("LINE_NOTIFY_CLIENT_ID"))
+NOTIFY_URL = os.environ.get('NOTIFY_URL', os.getenv("NOTIFY_URL"))
 ```
 
 ### views.py
