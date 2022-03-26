@@ -14,6 +14,14 @@ from .Func.pttCrawler import PTTCrawler
 line_bot_api = LineBotApi(settings.LINE_CHANNEL_ACCESS_TOKEN)
 parser = WebhookParser(settings.LINE_CHANNEL_SECRET)
 
+def Notify_MSG(token, msg):
+    headers = {
+        "Authorization": "Bearer " + token, 
+        "Content-Type" : "application/x-www-form-urlencoded"
+    }
+    payload = {'message': msg}
+    r = requests.post("https://notify-api.line.me/api/notify", headers = headers, params = payload)
+
 # Create your views here.
 @csrf_exempt
 def callback(request):
@@ -59,15 +67,10 @@ def callback(request):
                 elif mtext == 'Notify TEST':
                     if token:
                         msg = 'TEST!'
-                        headers = {
-                            "Authorization": "Bearer " + token, 
-                            "Content-Type" : "application/x-www-form-urlencoded"
-                        }
-                        payload = {'message': msg}
-                        r = requests.post("https://notify-api.line.me/api/notify", headers = headers, params = payload)
+                        Notify_MSG(token, msg)
                     else:
-                        url = f'https://notify-bot.line.me/oauth/authorize?response_type=code&client_id={settings.LINE_NOTIFY_CLIENT_ID}&redirect_uri={settings.NOTIFY_URL}&scope=notify&state=NO_STATE'
-                        # url = settings.NOTIFY_CONNECT_URL
+                        # url = f'https://notify-bot.line.me/oauth/authorize?response_type=code&client_id={settings.LINE_NOTIFY_CLIENT_ID}&redirect_uri={settings.NOTIFY_URL}&scope=notify&state=NO_STATE'
+                        url = settings.NOTIFY_CONNECT_URL
                         msg = f'請先綁定 Line Notify\n點擊下方連結即可開始綁定\n{url}'
                         line_bot_api.reply_message(
                             event.reply_token,
@@ -79,20 +82,25 @@ def callback(request):
                     if token:
                         msg = PTTCrawler()
                         if msg != '\n':
-                            headers = {
-                                "Authorization": "Bearer " + token, 
-                                "Content-Type" : "application/x-www-form-urlencoded"
-                            }
-                            payload = {'message': msg}
-                            r = requests.post("https://notify-api.line.me/api/notify", headers = headers, params = payload)
+                            Notify_MSG(token, msg)
                     else:
-                        url = f'https://notify-bot.line.me/oauth/authorize?response_type=code&client_id={settings.LINE_NOTIFY_CLIENT_ID}&redirect_uri={settings.NOTIFY_URL}&scope=notify&state=NO_STATE'
-                        # url = settings.NOTIFY_CONNECT_URL
+                        # url = f'https://notify-bot.line.me/oauth/authorize?response_type=code&client_id={settings.LINE_NOTIFY_CLIENT_ID}&redirect_uri={settings.NOTIFY_URL}&scope=notify&state=NO_STATE'
+                        url = settings.NOTIFY_CONNECT_URL
                         msg = f'請先綁定 Line Notify\n點擊下方連結即可開始綁定\n{url}'
                         line_bot_api.reply_message(
                             event.reply_token,
                             TextSendMessage(text=msg)
                         )
+
+                # 測試是否可以成功傳送訊息到USER及GROUP中
+                elif mtext == '全體提醒':
+                    users = User_Info.objects.all()
+                    groups = Group_Info.objects.all()
+                    msg = 'TEST'
+                    for i in users:
+                        Notify_MSG(i.notify, msg)
+                    for i in groups:
+                        Notify_MSG(i.notify, msg)
 
                 # # 回傳一樣的話
                 # line_bot_api.reply_message(
