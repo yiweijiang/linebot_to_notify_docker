@@ -237,3 +237,22 @@ The error : django.db.utils.ProgrammingError: relation "yourTable" does not exis
 ```
 heroku run python manage.py migrate --run-syncdb
 ```
+
+### Admin 介面
+架構在Heroku上時，Django靜態資源無法被順利讀取
+需調整專案上的設定
+#### urls.py
+```python
+from django.conf import settings
+from django.conf.urls.static import static
+
+urlpatterns = [
+    # ... the rest of your URLconf goes here ...
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+```
+#### settings.py
+```python
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+```
+記得新增資料夾static
