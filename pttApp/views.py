@@ -5,7 +5,7 @@ from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbid
 from linebot import LineBotApi, WebhookParser
 from linebot.exceptions import InvalidSignatureError, LineBotApiError
 from linebot.models import MessageEvent, TextSendMessage
-from pttApp.models import User_Info, Group_Info
+from pttApp.models import User_Info, Group_Info, User_Focus
 import requests
 import os
 import re
@@ -40,6 +40,7 @@ def callback(request):
             if isinstance(event, MessageEvent):
                 # 獲取用戶資料
                 print(event)
+                msg = ''
                 mtext = event.message.text # USER傳送的文字
                 uid = event.source.user_id # USER ID
                 profile = line_bot_api.get_profile(uid)
@@ -56,57 +57,78 @@ def callback(request):
                     User_Info.objects.filter(uid=uid).update(name=name,pic_url=pic_url,mtext=mtext)
                     token = User_Info.objects.filter(uid=uid)[0].notify # 獲得 token
 
-                if mtext == '連動Notify':
-                    url = settings.NOTIFY_CONNECT_URL
+                print('token', token)
+                # 確保有先取得token
+                if not token:
+                    url = f'https://notify-bot.line.me/oauth/authorize?response_type=code&client_id={settings.LINE_NOTIFY_CLIENT_ID}&redirect_uri={settings.NOTIFY_URL}&scope=notify&state=NO_STATE'
+                    # url = settings.NOTIFY_CONNECT_URL
+                    msg = f'請先綁定 Line Notify\n點擊下方連結即可開始綁定\n{url}'
                     line_bot_api.reply_message(
                         event.reply_token,
-                        TextSendMessage(text=url)
+                        TextSendMessage(text=msg)
                     )
-
-                # 測試 LINE Notify 傳送訊息
-                elif mtext == 'Notify TEST':
-                    if token:
-                        msg = 'TEST!'
-                        Notify_MSG(token, msg)
-                    else:
-                        # url = f'https://notify-bot.line.me/oauth/authorize?response_type=code&client_id={settings.LINE_NOTIFY_CLIENT_ID}&redirect_uri={settings.NOTIFY_URL}&scope=notify&state=NO_STATE'
-                        url = settings.NOTIFY_CONNECT_URL
-                        msg = f'請先綁定 Line Notify\n點擊下方連結即可開始綁定\n{url}'
+                else:
+                    if mtext == '連動Notify':
+                        url = f'https://notify-bot.line.me/oauth/authorize?response_type=code&client_id={settings.LINE_NOTIFY_CLIENT_ID}&redirect_uri={settings.NOTIFY_URL}&scope=notify&state=NO_STATE'
+                        # url = settings.NOTIFY_CONNECT_URL
                         line_bot_api.reply_message(
                             event.reply_token,
-                            TextSendMessage(text=msg)
+                            TextSendMessage(text=url)
                         )
 
-                # 測試能否用 LINE Notify 傳送 PTT八卦版訊息
-                elif mtext == 'PTT TEST':
-                    if token:
+                    # 測試 LINE Notify 傳送訊息
+                    elif mtext == 'Notify TEST':
+                        msg = 'TEST!'
+                        Notify_MSG(token, msg)
+
+                    # 測試能否用 LINE Notify 傳送 PTT八卦版訊息
+                    elif mtext == 'PTT TEST':
                         msg = PTTCrawler()
                         if msg != '\n':
                             Notify_MSG(token, msg)
-                    else:
-                        # url = f'https://notify-bot.line.me/oauth/authorize?response_type=code&client_id={settings.LINE_NOTIFY_CLIENT_ID}&redirect_uri={settings.NOTIFY_URL}&scope=notify&state=NO_STATE'
-                        url = settings.NOTIFY_CONNECT_URL
-                        msg = f'請先綁定 Line Notify\n點擊下方連結即可開始綁定\n{url}'
+
+                    # 測試是否可以成功傳送訊息到USER及GROUP中
+                    elif mtext == '全體提醒':
+                        users = User_Info.objects.all()
+                        groups = Group_Info.objects.all()
+                        msg = 'TEST'
+                        for i in users:
+                            Notify_MSG(i.notify, msg)
+                        for i in groups:
+                            Notify_MSG(i.notify, msg)
+
+                    # 新增看板
+                    elif 'ADD' in mtext:
+                        msg = '目前沒有開放這個版喔~'
+                        board = mtext.split()[-1]
+                        boards = ['Gossiping', 'Stock']
+                        if board in boards:
+                            if User_Focus.objects.filter(uid=uid, board=board).exists()==False:
+                                User_Focus.objects.create(uid=uid, board=board)
+                                msg = f'幫你追蹤{board}版囉'
+                            else:
+                                msg = f'你已經追蹤{board}版囉'
                         line_bot_api.reply_message(
                             event.reply_token,
                             TextSendMessage(text=msg)
                         )
 
-                # 測試是否可以成功傳送訊息到USER及GROUP中
-                elif mtext == '全體提醒':
-                    users = User_Info.objects.all()
-                    groups = Group_Info.objects.all()
-                    msg = 'TEST'
-                    for i in users:
-                        Notify_MSG(i.notify, msg)
-                    for i in groups:
-                        Notify_MSG(i.notify, msg)
+                    # 取消看板
+                    elif 'Cancel' in mtext:
+                        msg = '目前沒有開放這個版喔~'
+                        board = mtext.split()[-1]
+                        boards = ['Gossiping', 'Stock']
+                        if board in board:
+                            if User_Focus.objects.filter(uid=uid, board=board).exists():
+                                User_Focus.objects.filter(uid=uid, board=board).delete()
+                                msg = f'幫你取消追蹤{board}版囉'
+                            else:
+                                msg = f'你沒追蹤{board}版喔'
+                        line_bot_api.reply_message(
+                            event.reply_token,
+                            TextSendMessage(text=msg)
+                        )
 
-                # # 回傳一樣的話
-                # line_bot_api.reply_message(
-                #     event.reply_token,
-                #     TextSendMessage(text=event.message.text)
-                # )
         return HttpResponse()
     else:
         return HttpResponseBadRequest()

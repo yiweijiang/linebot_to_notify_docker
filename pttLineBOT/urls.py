@@ -20,6 +20,7 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('pttApp/', include('pttApp.urls')),  #既有的LINE Bot網址
+    path('pttApp/', include('pttApp.urls')),  # 管理 LINE Bot
+    path('webBackend/', include('webBackend.urls')),  # 後台
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 # Serving static files during development

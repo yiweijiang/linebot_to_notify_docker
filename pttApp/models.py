@@ -13,6 +13,11 @@ class User_Info(models.Model):
     def __str__(self):
         return self.name
 
+class User_Focus(models.Model):
+    uid = models.CharField(max_length=50,null=False,default='')         # user_id
+    board = models.CharField(max_length=255,blank=True,null=False)      # 關注的板
+    mdt = models.DateTimeField(auto_now=True)                           # 物件儲存的日期時間 
+
 class Ptt_Info(models.Model):
     TITLE = models.TextField()
     URL = models.URLField()
