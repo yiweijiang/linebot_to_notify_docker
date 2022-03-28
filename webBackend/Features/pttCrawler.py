@@ -54,7 +54,7 @@ class PTTCrawler():
 
     def StackCrawler(self):
         res_lst = []
-        url = 'https://www.ptt.cc/bbs/Stock/search?q=%E8%B2%B7%E8%B3%A3%E8%B6%85%E6%8E%92%E8%A1%8C'
+        url = 'https://www.ptt.cc/bbs/Stock/search?q=%E8%B2%B7%E8%B3%A3%E8%B6%85'
         nrecs, titles, authors = self.Crawler(url)
         for nrec, title, author in zip(nrecs, titles, authors):
             if title.find('a') != None and nrec.text.isdigit():
