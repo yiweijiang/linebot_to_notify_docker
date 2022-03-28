@@ -6,6 +6,7 @@ import requests
 import os
 # Create your views here.
 
+# 爬取八卦版資料
 def ptt_Gossiping_crawler(request):
 	res = PTTCrawler('Gossiping').main(20)
 	broadcast = User_Focus.objects.filter(board='Gossiping')
@@ -20,6 +21,7 @@ def ptt_Gossiping_crawler(request):
 				User_Focus.objects.filter(uid=i.uid).delete()
 	return render(request, 'index.html')
 
+# 爬取股版資料
 def ptt_Stock_crawler(request):
 	res_lst = PTTCrawler('Stock').StackCrawler()
 	broadcast = User_Focus.objects.filter(board='Stock')
