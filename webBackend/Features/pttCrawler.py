@@ -52,7 +52,7 @@ class PTTCrawler():
             for i in all_data[:500]:
                 Ptt_News.objects.filter(id=i.id).delete()
 
-    def StackCrawler(self):
+    def StockCrawler(self):
         res_lst = []
         url = 'https://www.ptt.cc/bbs/Stock/search?q=%E8%B2%B7%E8%B3%A3%E8%B6%85'
         nrecs, titles, authors = self.Crawler(url)
@@ -62,13 +62,19 @@ class PTTCrawler():
                 if 'Re:' in t:
                     continue
                 href = 'https://www.ptt.cc/' + title.find('a')['href']
-                r = requests.get(href, cookies={'over18':'1'})
-                soup = BeautifulSoup(r.text, "html.parser")
-                img =  soup.find('a', {'href':re.compile(r'^https://i.imgur.com/')}).text
-                
                 if Ptt_News.objects.filter(URL=href).exists() == False:
                     Ptt_News.objects.create(URL=href,BOARD=self.board,AUTHOR=author.text,TITLE=t,NRECS=int(nrec.text))
+                else:
+                    continue
+
+                r = requests.get(href, cookies={'over18':'1'})
+                soup = BeautifulSoup(r.text, "html.parser")
+                img =  soup.find('a', {'href':re.compile(r'^https://i.imgur.com/')})
+                
+                if img:
+                    img = img.text
                     res_lst.append([t, img])
+
         return res_lst
 
     def main(self, count): # count 代表要抓幾頁的資料

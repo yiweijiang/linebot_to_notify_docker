@@ -3,11 +3,15 @@ from .Features.pttCrawler import PTTCrawler
 from .Features.NotifyFunc import Line_Notify
 from pttApp.models import User_Info, User_Focus
 import requests
+from datetime import datetime
 import os
 # Create your views here.
 
 # 爬取八卦版資料
 def ptt_Gossiping_crawler(request):
+	t = datetime.now()
+	t_str = t.strftime('%Y-%m-%d %H:%H:%S')
+	print(f'現在時間：{t_str}')
 	res = PTTCrawler('Gossiping').main(20)
 	broadcast = User_Focus.objects.filter(board='Gossiping')
 	for i in broadcast:
@@ -23,7 +27,10 @@ def ptt_Gossiping_crawler(request):
 
 # 爬取股版資料
 def ptt_Stock_crawler(request):
-	res_lst = PTTCrawler('Stock').StackCrawler()
+	t = datetime.now()
+	t_str = t.strftime('%Y-%m-%d %H:%H:%S')
+	print(f'現在時間：{t_str}')
+	res_lst = PTTCrawler('Stock').StockCrawler()
 	broadcast = User_Focus.objects.filter(board='Stock')
 	for i in broadcast:
 		users = User_Info.objects.filter(uid=i.uid)
