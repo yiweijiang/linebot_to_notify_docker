@@ -13,7 +13,11 @@ class StockStrategy():
 		# 	command_executor='http://chrome:4444/wd/hub',
 		# 	desired_capabilities=DesiredCapabilities.CHROME,
 		# )
-		self.driver = webdriver.Chrome()
+
+		options = webdriver.ChromeOptions()
+		options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
+		chromePATH = os.environ.get("CHROMEDRIVER_PATH", '')
+		self.driver = webdriver.Chrome(chromePATH, options=options)
 
 	def Crawler(self, url):
 		res = []
