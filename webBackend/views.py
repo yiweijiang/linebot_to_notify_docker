@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from .Features.pttCrawler import PTTCrawler
 from .Features.NotifyFunc import Line_Notify
+from .Features.StockStrategy import StockStrategy
 from pttApp.models import User_Info, User_Focus
 import requests
 from datetime import datetime
@@ -25,7 +26,7 @@ def ptt_Gossiping_crawler(request):
 				User_Focus.objects.filter(uid=i.uid).delete()
 	return render(request, 'index.html')
 
-# 爬取股版資料
+# 爬取股版買賣超圖片
 def ptt_Stock_crawler(request):
 	t = datetime.now()
 	t_str = t.strftime('%Y-%m-%d %H:%H:%S')
@@ -48,4 +49,25 @@ def ptt_Stock_crawler(request):
 				if not status_code:
 					User_Info.objects.filter(notify=token).delete()
 					User_Focus.objects.filter(uid=i.uid).delete()
+	return render(request, 'index.html')
+
+# 爬取Goodinfo網站股票策略
+def GoodinfoCrawler(request):
+	t = datetime.now()
+	t_str = t.strftime('%Y-%m-%d %H:%H:%S')
+	print(f'現在時間：{t_str}')
+	s = StockStrategy()
+	s.TradingVolume()
+	MACD_msg = s.Strategy('MACD')
+	KDCross_msg = s.Strategy('KDCross')
+	s.driver.close()
+
+	broadcast = User_Focus.objects.filter(board='Stock')
+	for i in broadcast:
+		users = User_Info.objects.filter(uid=i.uid)
+		for user in users:
+			print(f'Send msg to {user.name}')
+			token = user.notify
+			Line_Notify().post_image('MACD\n'+MACD_msg, token, file)
+			Line_Notify().post_image('KD黃金交叉\n'+KDCross_msg, token, file)
 	return render(request, 'index.html')
