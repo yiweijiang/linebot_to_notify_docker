@@ -48,8 +48,8 @@ class PTTCrawler():
 
     def DeleteData(self):
         all_data = Ptt_News.objects.order_by('id')
-        if len(all_data) > 1000:
-            for i in all_data[:500]:
+        if len(all_data) > 5000:
+            for i in all_data[:2000]:
                 Ptt_News.objects.filter(id=i.id).delete()
 
     def StockCrawler(self):
