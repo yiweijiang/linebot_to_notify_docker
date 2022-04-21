@@ -1,4 +1,4 @@
-# from webBackend.models import Ptt_News
+from webBackend.models import Ptt_News
 from bs4 import BeautifulSoup
 import requests
 import re
@@ -41,13 +41,13 @@ class PTTCrawler():
         res = ''
         href = 'https://www.ptt.cc/' + title.find('a')['href']
         print(href)
-        # if Ptt_News.objects.filter(URL=href).exists() == False:
-        #     res = f"{title.find('a').get_text()}\n{href}\n\n"
-        #     # 建立新資料
-        #     Ptt_News.objects.create(URL=href,BOARD=self.board,AUTHOR=author.text,TITLE=title.find('a').get_text(),NRECS=int(nrec.text))
-        # else:
-        #     # 更新推數
-        #     Ptt_News.objects.filter(URL=href).update(NRECS=int(nrec.text))
+        if Ptt_News.objects.filter(URL=href).exists() == False:
+            res = f"{title.find('a').get_text()}\n{href}\n\n"
+            # 建立新資料
+            Ptt_News.objects.create(URL=href,BOARD=self.board,AUTHOR=author.text,TITLE=title.find('a').get_text(),NRECS=int(nrec.text))
+        else:
+            # 更新推數
+            Ptt_News.objects.filter(URL=href).update(NRECS=int(nrec.text))
         return res
 
     def DeleteData(self):
@@ -79,7 +79,6 @@ class PTTCrawler():
                     img = img.text
                     # res_lst.append([t, img])
                     res_lst.append([f'{t}\n{href}', img])
-
         return res_lst
 
     def main(self, count): # count 代表要抓幾頁的資料
@@ -90,5 +89,5 @@ class PTTCrawler():
         self.DeleteData() # 刪除太多的資料
         return res
 
-res = PTTCrawler('Gossiping').main(20)
-print(res)
+# res = PTTCrawler('Gossiping').main(20)
+# print(res)
