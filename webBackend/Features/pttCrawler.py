@@ -1,4 +1,4 @@
-from webBackend.models import Ptt_News
+# from webBackend.models import Ptt_News
 from bs4 import BeautifulSoup
 import requests
 import re
@@ -8,7 +8,9 @@ class PTTCrawler():
         self.board = board
 
     def GetIndex(self):
-        r = requests.get(f'https://www.ptt.cc/bbs/{self.board}/index.html', cookies={'over18':'1'})
+        header = {
+            'User-Agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36'}
+        r = requests.get(f'https://www.ptt.cc/bbs/{self.board}/index.html', cookies={'over18':'1'}, headers=header)
         print(r.text)
         soup = BeautifulSoup(r.text, "html.parser")
         index = soup.find_all('a', class_='btn wide')[1]['href']
@@ -38,13 +40,14 @@ class PTTCrawler():
     def InsertORUpdateData(self, nrec, title, author):
         res = ''
         href = 'https://www.ptt.cc/' + title.find('a')['href']
-        if Ptt_News.objects.filter(URL=href).exists() == False:
-            res = f"{title.find('a').get_text()}\n{href}\n\n"
-            # 建立新資料
-            Ptt_News.objects.create(URL=href,BOARD=self.board,AUTHOR=author.text,TITLE=title.find('a').get_text(),NRECS=int(nrec.text))
-        else:
-            # 更新推數
-            Ptt_News.objects.filter(URL=href).update(NRECS=int(nrec.text))
+        print(href)
+        # if Ptt_News.objects.filter(URL=href).exists() == False:
+        #     res = f"{title.find('a').get_text()}\n{href}\n\n"
+        #     # 建立新資料
+        #     Ptt_News.objects.create(URL=href,BOARD=self.board,AUTHOR=author.text,TITLE=title.find('a').get_text(),NRECS=int(nrec.text))
+        # else:
+        #     # 更新推數
+        #     Ptt_News.objects.filter(URL=href).update(NRECS=int(nrec.text))
         return res
 
     def DeleteData(self):
@@ -87,5 +90,5 @@ class PTTCrawler():
         self.DeleteData() # 刪除太多的資料
         return res
 
-# res = PTTCrawler('Gossiping').main(20)
-# print(res)
+res = PTTCrawler('Gossiping').main(20)
+print(res)
