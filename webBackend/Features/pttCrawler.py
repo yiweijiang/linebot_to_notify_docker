@@ -85,3 +85,6 @@ class PTTCrawler():
             res = self.StackCrawler()
         self.DeleteData() # 刪除太多的資料
         return res
+
+# res = PTTCrawler('Gossiping').main(20)
+# print(res)
