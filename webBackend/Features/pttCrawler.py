@@ -9,6 +9,7 @@ class PTTCrawler():
 
     def GetIndex(self):
         r = requests.get(f'https://www.ptt.cc/bbs/{self.board}/index.html', cookies={'over18':'1'})
+        print(r.text)
         soup = BeautifulSoup(r.text, "html.parser")
         index = soup.find_all('a', class_='btn wide')[1]['href']
         page = int(re.findall(r"\d+", index)[0]) + 1
