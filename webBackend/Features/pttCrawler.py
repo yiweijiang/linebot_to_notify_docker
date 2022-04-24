@@ -15,6 +15,7 @@ class PTTCrawler():
         soup = BeautifulSoup(r.text, "html.parser")
         index = soup.find_all('a', class_='btn wide')[1]['href']
         page = int(re.findall(r"\d+", index)[0]) + 1
+        print('page=', page)
         return page
 
     def Crawler(self, url):
