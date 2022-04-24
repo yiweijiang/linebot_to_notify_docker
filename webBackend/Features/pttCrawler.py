@@ -33,6 +33,7 @@ class PTTCrawler():
         for i in range(c, -1, -1):
             url = f'https://www.ptt.cc/bbs/{self.board}/index{page-i}.html'
             nrecs, titles, authors = self.Crawler(url)
+            print(nrecs, titles, authors)
             for nrec, title, author in zip(nrecs, titles, authors):
                 if title.find('a') != None and nrec.text.isdigit():
                     if int(nrec.text) >= 50:
