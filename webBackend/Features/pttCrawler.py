@@ -19,10 +19,10 @@ class PTTCrawler():
         return page
 
     def Crawler(self, url):
-        r = requests.get(url, cookies={'over18':'1'})
+        header = {
+            'User-Agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36'}
+        r = requests.get(url, cookies={'over18':'1'}, headers=header)
         soup = BeautifulSoup(r.text, "html.parser")
-        print(r.text)
-        # print(soup.prettify())
         nrecs = soup.find_all('div', class_='nrec')
         titles = soup.find_all('div', class_='title')
         authors = soup.find_all('div', class_='author')
