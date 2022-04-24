@@ -21,6 +21,7 @@ class PTTCrawler():
     def Crawler(self, url):
         r = requests.get(url, cookies={'over18':'1'})
         soup = BeautifulSoup(r.text, "html.parser")
+        print(soup.prettify())
         nrecs = soup.find_all('div', class_='nrec')
         titles = soup.find_all('div', class_='title')
         authors = soup.find_all('div', class_='author')
