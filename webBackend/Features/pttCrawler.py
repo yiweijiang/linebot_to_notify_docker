@@ -27,6 +27,7 @@ class PTTCrawler():
         return nrecs, titles, authors
 
     def GossipingCrawler(self, c):
+        print('start GossipingCrawler')
         res = '\n'
         page = self.GetIndex()
         for i in range(c, -1, -1):
