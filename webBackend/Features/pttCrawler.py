@@ -39,6 +39,8 @@ class PTTCrawler():
             for nrec, title, author in zip(nrecs, titles, authors):
                 if title.find('a') != None and nrec.text.isdigit():
                     if int(nrec.text) >= 50:
+                        if author == 'DevilHotel':
+                            continue
                         res += self.InsertORUpdateData(nrec, title, author)
         return res
 
