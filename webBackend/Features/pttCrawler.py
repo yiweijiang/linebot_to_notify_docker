@@ -48,7 +48,6 @@ class PTTCrawler():
     def InsertORUpdateData(self, nrec, title, author):
         res = ''
         href = 'https://www.ptt.cc/' + title.find('a')['href']
-        # print(href)
         if Ptt_News.objects.filter(URL=href).exists() == False:
             res = f"{title.find('a').get_text()}\n{href}\n\n"
             # 建立新資料
