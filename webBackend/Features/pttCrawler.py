@@ -29,7 +29,7 @@ class PTTCrawler():
         return nrecs, titles, authors
 
     def GossipingCrawler(self, c):
-        print('start GossipingCrawler')
+        print('Start GossipingCrawler.')
         res = '\n'
         page = self.GetIndex()
         for i in range(c, -1, -1):
@@ -42,6 +42,7 @@ class PTTCrawler():
                         if author == 'DevilHotel':
                             continue
                         res += self.InsertORUpdateData(nrec, title, author)
+        print('End GossipingCrawler.')
         return res
 
     def InsertORUpdateData(self, nrec, title, author):
@@ -64,6 +65,7 @@ class PTTCrawler():
                 Ptt_News.objects.filter(id=i.id).delete()
 
     def StockCrawler(self):
+        print('Start StockCrawler.')
         res_lst = []
         url = 'https://www.ptt.cc/bbs/Stock/search?q=%E8%B2%B7%E8%B3%A3%E8%B6%85'
         nrecs, titles, authors = self.Crawler(url)
@@ -86,15 +88,17 @@ class PTTCrawler():
                     img = img.text
                     # res_lst.append([t, img])
                     res_lst.append([f'{t}\n{href}', img])
+        print('End StockCrawler.')
         return res_lst
 
     def main(self, count): # count 代表要抓幾頁的資料
         if self.board == 'Gossiping':
             res = self.GossipingCrawler(count)
         elif self.board == 'Stock':
-            res = self.StackCrawler()
-        self.DeleteData() # 刪除太多的資料
+            res = self.StockCrawler()
+        # self.DeleteData() # 刪除太多的資料
         return res
 
 # res = PTTCrawler('Gossiping').main(20)
+# res = PTTCrawler('Stock').main(20)
 # print(res)
