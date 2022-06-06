@@ -96,7 +96,7 @@ class PTTCrawler():
             res = self.GossipingCrawler(count)
         elif self.board == 'Stock':
             res = self.StockCrawler()
-        # self.DeleteData() # 刪除太多的資料
+        self.DeleteData() # 刪除太多的資料
         return res
 
 # res = PTTCrawler('Gossiping').main(20)
