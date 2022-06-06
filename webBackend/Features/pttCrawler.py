@@ -84,6 +84,7 @@ class PTTCrawler():
                 img =  soup.find('a', {'href':re.compile(r'^https://i.imgur.com/')})
                 
                 if img:
+                    print(img)
                     img = img.text
                     # res_lst.append([t, img])
                     res_lst.append([f'{t}\n{href}', img])
