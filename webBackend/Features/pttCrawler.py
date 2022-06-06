@@ -82,7 +82,7 @@ class PTTCrawler():
                 r = requests.get(href, cookies={'over18':'1'})
                 soup = BeautifulSoup(r.text, "html.parser")
                 img =  soup.find('a', {'href':re.compile(r'^https://i.imgur.com/')})
-                
+                print(nrec, title, author)
                 if img:
                     print(img)
                     img = img.text
